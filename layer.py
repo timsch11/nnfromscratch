@@ -1,6 +1,3 @@
-"""base class for all layers"""
-
-
 import numpy as np
 from activationFunctions import relu, sigmoid, tanh, softmax
 
@@ -15,7 +12,7 @@ activationFunctionMap = {
     "": lambda x: x
 }
 
-
+"""base class for all layers"""
 class layer:
     def __init__(self, activationFunction: str=""):
         """base class for all layers"""
