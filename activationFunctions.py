@@ -24,6 +24,20 @@ def relu(xvec: np.ndarray | list | int | float) -> np.ndarray:
     return applyMap(xvec=xvec, func=f)
 
 
+def drelu(xvec: np.ndarray | list | int | float, previousDerivatives: np.ndarray=None) -> np.ndarray:
+    """derivative of relu function with respect to input, returns vector of dloss_dreluinput, xvec := input of relu function"""
+
+    # if previousDerivatives is empty or do not exist it should have no impact no result
+    if previousDerivatives is None:
+        previousDerivatives = np.array([1 for i in range(len(xvec))])
+    
+    # define relu derivative as single variable function
+    df_dx = lambda x: 1 if x > 0 else 0
+
+    # apply Map to all elements of the vector
+    return np.multiply(applyMap(xvec=xvec, func=df_dx), previousDerivatives)
+
+
 def sigmoid(xvec: np.ndarray | list | int | float) -> np.ndarray:
     """applies sigmoid function to all elements in a numpy array, returns numpy array of same shape"""
     
@@ -60,4 +74,5 @@ def softmax(xvec: np.ndarray | list | int | float) -> np.ndarray:
 
 
 if __name__ == '__main__':
+    print(drelu(np.array([-1, 2]), np.array([-2, 2])))
     print(relu([1.2, 1, 5]))
