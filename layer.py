@@ -1,5 +1,5 @@
 import numpy as np
-from activationFunctions import relu, sigmoid, tanh, softmax
+from activationFunctions import relu, sigmoid, tanh, softmax, drelu
 
 
 # maps the name of an activation function (string) to corresponding value (function)
@@ -12,9 +12,14 @@ activationFunctionMap = {
     "": lambda x: x
 }
 
+# maps the name of the activation function to its derivative
+derivativeActivationFunctionMap = {
+    "relu": drelu
+}
+
 """base class for all layers"""
 class layer:
-    def __init__(self, activationFunction: str=""):
+    def __init__(self, activationFunction: str="", learningRate: float = 0.01):
         """base class for all layers"""
 
         # check if activation function is available, raise Error and print available functions if not
@@ -22,8 +27,12 @@ class layer:
             print("Your chosen activation function is not available, pick one out of ", activationFunctionMap.keys())
             raise KeyError
         
-        # store activation function reference for later use
+        # store activation function (and its derivative) reference for later use
         self.activation = activationFunctionMap[activationFunction]
+        self.derivativeActivation = derivativeActivationFunctionMap[activationFunction]
+
+        # store learning rate for training
+        self.learningRate = learningRate
 
     @staticmethod
     def initializeWeights(inputSize: int, outputSize: int) -> np.ndarray: 
