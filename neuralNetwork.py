@@ -29,23 +29,31 @@ class NN:
         # store layer in a list
         self.layers = layers
 
-    def train(self, X: np.ndarray, y: np.ndarray) -> None:
+    def train(self, X: np.ndarray, y: np.ndarray, learningRate: float=0.01) -> None:
+        """trains the neural network based on one given sample"""
+
         # configure layers for training
         for layer in self.layers:
             layer.activateTraining()
 
+        # get prediction based on current weights
         result = self.predict(X=X)
 
+        # dloss/dpredicted
         gradInput = self.lossFunctionDerivative(predicted=result, actual=y)
 
+        # perform backpropagation
         for i in range(len(self.layers)-1, -1, -1):
-            gradInput = self.layers[i].backpropagate(gradInput)
+            gradInput = self.layers[i].backpropagate(gradInput, learningRate)
 
         # deactivate training configuration
         for layer in self.layers:
             layer.deactivateTraining()
 
     def predict(self, X: np.ndarray) -> np.ndarray:
+        """performs the chained forward pass for all layers"""
+
+        # performs forward pass for all layers
         for layer in self.layers:
             X = layer.forward(X)
 

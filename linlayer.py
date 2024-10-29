@@ -55,8 +55,12 @@ class linlayer(layer):
         return self.activation(result)  
   
 
-    def backpropagate(self, dloss_dactFunc: np.ndarray) -> np.ndarray:
+    def backpropagate(self, dloss_dactFunc: np.ndarray, learningRate: float=0) -> np.ndarray:
         """adjusts the weigths and biases of the current layer, returns input for backpropagtion of the next layer (grad with respect to the previous layers activation)"""
+
+        # set learning rate to class standard if not specified
+        if learningRate == 0:
+            learningRate = self.learningRate
 
         # derivative of loss function with respect to this layers results before activation
         dloss_dresult = self.derivativeActivation(xvec=self.resultBeforeActivation, previousDerivatives=dloss_dactFunc)
@@ -79,13 +83,13 @@ class linlayer(layer):
                 der_prevAct.append(dloss_dresult[j] * self.weights[i][j])
 
                 # update weights
-                self.weights[i][j] = self.weights[i][j] - (self.learningRate * dloss_dweight)
+                self.weights[i][j] = self.weights[i][j] - (learningRate * dloss_dweight)
 
             # update dloss_dpreviousactivation
             dloss_dinput = dloss_dinput + np.array(der_prevAct)
 
         # update bias
-        self.bias = self.bias - (self.learningRate * dloss_dactFunc)
+        self.bias = self.bias - (learningRate * dloss_dactFunc)
 
         # return dloss_dinput (grad with respect to the previous layers activations)
         return dloss_dinput

@@ -1,4 +1,5 @@
 import numpy as np
+
 from activationFunctions import applyMap
 
 def l2(predicted: np.ndarray | int | list | int | float, actual: np.ndarray | int | list | int | float):
