@@ -14,4 +14,6 @@ def dl2(predicted: np.ndarray | int | list | int | float, actual: np.ndarray| in
 
 
 if __name__ == '__main__':
-    print(dl2(np.array([1, 2, 3, 4]), np.array([0, 1, 1, 4])))
+    a = np.array([1, 2, 3, 4]) 
+    a += np.array([0, 1, 1, 4])
+    print(a)

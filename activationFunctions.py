@@ -74,5 +74,5 @@ def softmax(xvec: np.ndarray | list | int | float) -> np.ndarray:
 
 
 if __name__ == '__main__':
-    print(drelu(np.array([-1, 2]), np.array([-2, 2])))
+    print(np.multiply(np.array([-1, 2]), np.array([-2, 2])))
     print(relu([1.2, 1, 5]))

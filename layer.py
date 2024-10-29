@@ -31,10 +31,27 @@ class layer:
         self.activation = activationFunctionMap[activationFunction]
         self.derivativeActivation = derivativeActivationFunctionMap[activationFunction]
 
+        # are we performing a training iteration?
+        self.training = False
+
         # store learning rate for training
         self.learningRate = learningRate
+
+    def activateTraining(self):
+        self.training = True     
+    
+    def deactivateTraining(self):
+        self.training = False   
+
+    @staticmethod
+    def kaimingHeInitialization(inputSize: int, outputSize: int) -> np.ndarray:
+        return np.random.normal(loc=0, scale=(2/inputSize)**(1/2), size=(inputSize, outputSize)) 
+
+    @staticmethod
+    def xavierInitialization(inputSize: int, outputSize: int) -> np.ndarray:
+        return np.random.normal(loc=0, scale=(1/inputSize)**(1/2), size=(inputSize, outputSize)) 
 
     @staticmethod
     def initializeWeights(inputSize: int, outputSize: int) -> np.ndarray: 
         # pytoch-like implementation, requires transpose
-        return np.random.normal(loc=0, scale=1, size=(outputSize, inputSize)) 
+        return np.random.normal(loc=0, scale=1, size=(inputSize, outputSize)) 
