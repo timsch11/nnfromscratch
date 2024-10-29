@@ -7,6 +7,7 @@ class linlayer(layer):
     def __init__(self, activationFunction: str, inputSize: int, outputSize: int, learningRate: float = 0.01, weights: np.ndarray=None):
         """provides a linear layer for a neural network"""
 
+        # to be removed
         np.random.seed(1234)
 
         super().__init__(activationFunction=activationFunction, learningRate=learningRate)
@@ -95,7 +96,9 @@ class linlayer(layer):
         return dloss_dinput
     
 
-    def __call__(self, inputVec: np.ndarray):
+    def __call__(self, inputVec: np.ndarray) -> np.ndarray:
+        """calls func forward"""
+
         return self.forward(inputVec=inputVec)                   
 
 
