@@ -1,6 +1,7 @@
 # Neural Network from Scratch
 
-This project implements a basic neural network framework in Python, built from scratch. The implementation includes fundamental components such as layers, activation functions, and loss functions.
+This project implements a basic neural network framework in Python, built from scratch using only numpy arrays. The implementation includes fundamental components such as layers, activation functions, and loss functions.
+This was a short personal project to enhace my understanding of neural networks.
 
 ## Features
 
