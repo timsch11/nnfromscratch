@@ -3,6 +3,7 @@ from nn.layer import layer
 
 """provides a linear layer for a neural network"""
 
+
 class linlayer(layer):
     def __init__(self, activationFunction: str, inputSize: int, outputSize: int, learningRate: float = 0.01, weights: np.ndarray=None):
         """provides a linear layer for a neural network"""
@@ -27,6 +28,7 @@ class linlayer(layer):
         # data used for training later on
         self.inputVec = np.array([])
         self.resultBeforeActivation = np.array([])
+        self.resultAfterActivation = np.array([])
 
 
     def forward(self, inputVec: np.ndarray) -> np.ndarray:
@@ -47,13 +49,17 @@ class linlayer(layer):
         # add bias
         result += self.bias   
 
+        # apply activation function 
+        resultActivation = self.activation(result)
+
         # store values for training
         if self.training:
             self.inputVec = inputVec
             self.resultBeforeActivation = result
+            self.resultAfterActivation = resultActivation
 
-        # apply activation function and return result                   
-        return self.activation(result)  
+        # return result                   
+        return resultActivation 
   
 
     def backpropagate(self, dloss_dactFunc: np.ndarray, learningRate: float=0) -> np.ndarray:
@@ -64,7 +70,7 @@ class linlayer(layer):
             learningRate = self.learningRate
 
         # derivative of loss function with respect to this layers results before activation
-        dloss_dresult = self.derivativeActivation(xvec=self.resultBeforeActivation, previousDerivatives=dloss_dactFunc)
+        dloss_dresult = self.derivativeActivation(xvec=self.resultBeforeActivation, postActivation=self.resultAfterActivation, previousDerivatives=dloss_dactFunc)
 
         # init empty vector for dloss_dpreviousactivation
         dloss_dinput = np.array([0 for i in range(self.shape[0])])

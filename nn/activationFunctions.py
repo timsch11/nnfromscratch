@@ -5,6 +5,7 @@ from typing import Callable
 
 """implements all supported activation functions, all of which are designed to either be fed with a single number or a vector of numbers (numpy.array) and return the result as a numpy array"""
 
+
 def applyMap(xvec: np.ndarray | list | int | float, func: Callable) -> np.ndarray:
     """applies the specified R -> R function to all elements of the specified vector (R^n -> R^n)"""
 
@@ -28,19 +29,19 @@ def relu(xvec: np.ndarray | list | int | float) -> np.ndarray:
     return applyMap(xvec=xvec, func=f)
 
 
-def drelu(xvec: np.ndarray | list | int | float, previousDerivatives: np.ndarray=None) -> np.ndarray:
+def drelu(xvec: np.ndarray | list | int | float, postActivation: np.ndarray, previousDerivatives: np.ndarray=None) -> np.ndarray:
     """derivative of relu function with respect to input, returns vector of dloss_dreluinput, xvec := input of relu function"""
 
     # check if xvec is a single number and convert to numpy array if necessary
     if type(xvec) in {int, float}:  # if xvec is a single number
         xvec = np.array([xvec])     # convert it to a numpy array
-
-    # if previousDerivatives is empty or do not exist it should have no impact on result
-    if previousDerivatives is None:
-        previousDerivatives = np.array([1 for i in range(len(xvec))])
     
     # define relu derivative as single variable function
     df_dx = lambda x: 1 if x > 0 else 0
+
+    # if previousDerivatives is empty or do not exist it should have no impact on result
+    if previousDerivatives is None:
+        return applyMap(xvec=xvec, func=df_dx)
 
     # apply Map to all elements of the vector
     return np.multiply(applyMap(xvec=xvec, func=df_dx), previousDerivatives)
@@ -56,6 +57,24 @@ def sigmoid(xvec: np.ndarray | list | int | float) -> np.ndarray:
     return applyMap(xvec=xvec, func=f)
 
 
+def dsigmoid(xvec: np.ndarray | list | int | float, postActivation: np.ndarray, previousDerivatives: np.ndarray=None) -> np.ndarray:
+    """derivative of sigmoid function with respect to input, returns vector of dloss_dsigmoidinput, xvec := input of sigmoid function"""
+
+    # check if xvec is a single number and convert to numpy array if necessary
+    if type(xvec) in {int, float}:  # if xvec is a single number
+        xvec = np.array([xvec])     # convert it to a numpy array
+    
+    # define sigmoid derivative as single variable function
+    df_dx = lambda x: x * (1 - x)
+
+    # if previousDerivatives is empty or do not exist it should have no impact on result
+    if previousDerivatives is None:
+        return applyMap(xvec=postActivation, func=df_dx)
+
+    # apply Map to all elements of the vector
+    return np.multiply(applyMap(xvec=postActivation, func=df_dx), previousDerivatives)
+
+
 def tanh(xvec: np.ndarray | list | int | float) -> np.ndarray:
     """applies tanh function to all elements in a numpy array, returns numpy array of same shape"""
     
@@ -64,6 +83,24 @@ def tanh(xvec: np.ndarray | list | int | float) -> np.ndarray:
     
     # apply Map to all elements of the vector
     return applyMap(xvec=xvec, func=f)
+
+
+def dtanh(xvec: np.ndarray | list | int | float, postActivation: np.ndarray, previousDerivatives: np.ndarray=None) -> np.ndarray:
+    """derivative of tanh function with respect to input, returns vector of dloss_dtanhinput, xvec := input of tanh function"""
+
+    # check if xvec is a single number and convert to numpy array if necessary
+    if type(xvec) in {int, float}:  # if xvec is a single number
+        xvec = np.array([xvec])     # convert it to a numpy array
+    
+    # define sigmoid derivative as single variable function
+    df_dx = lambda x: 1 - x**2
+
+    # if previousDerivatives is empty or do not exist it should have no impact on result
+    if previousDerivatives is None:
+        return applyMap(xvec=postActivation, func=df_dx)
+
+    # apply Map to all elements of the vector
+    return np.multiply(applyMap(xvec=postActivation, func=df_dx), previousDerivatives)
 
 
 def softmax(xvec: np.ndarray | list | int | float) -> np.ndarray:
@@ -79,3 +116,31 @@ def softmax(xvec: np.ndarray | list | int | float) -> np.ndarray:
 
     # apply Map to all elements of the vector
     return applyMap(xvec=xvec, func=f)
+
+
+def dsoftmax(xvec: np.ndarray | list | int | float, postActivation: np.ndarray, previousDerivatives: np.ndarray=None):
+    """derivative of softmax function with respect to input, returns vector of dloss_dsoftmaxinput, xvec := input of softmax function"""
+
+    # check if xvec is a single number and convert to numpy array if necessary
+    if type(xvec) in {int, float}:  # if xvec is a single number
+        xvec = np.array([xvec])     # convert it to a numpy array
+
+    # define softmax derivative as single variable function
+    def df_dx(x, i, j):
+        if i == j:
+            return x[i] * (1 - x[i])
+        else:
+            return -x[i] * x[j]
+
+    # if previousDerivatives is empty or do not exist it should have no impact on result
+    if previousDerivatives is None:
+        previousDerivatives = np.ones_like(postActivation)
+
+    # calculate the Jacobian matrix of the softmax function
+    jacobian_matrix = np.zeros((len(postActivation), len(postActivation)))
+    for i in range(len(postActivation)):
+        for j in range(len(postActivation)):
+            jacobian_matrix[i][j] = df_dx(postActivation, i, j)
+
+    # multiply the Jacobian matrix by the previous derivatives
+    return np.dot(jacobian_matrix, previousDerivatives)

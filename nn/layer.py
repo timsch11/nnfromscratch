@@ -1,5 +1,5 @@
 import numpy as np
-from nn.activationFunctions import relu, sigmoid, tanh, softmax, drelu
+from nn.activationFunctions import relu, sigmoid, tanh, softmax, drelu, dsigmoid, dtanh, dsoftmax
 
 
 # maps the name of an activation function (string) to corresponding value (function)
@@ -15,6 +15,9 @@ activationFunctionMap = {
 # maps the name of the activation function to its derivative
 derivativeActivationFunctionMap = {
     "relu": drelu,
+    "sigmoid": dsigmoid,
+    "tanh": dtanh,
+    "softmax": dsoftmax,
     "": lambda x: 1
 }
 
